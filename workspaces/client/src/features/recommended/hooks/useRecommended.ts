@@ -5,12 +5,12 @@ interface Params {
 }
 
 export function useRecommended({ referenceId }: Params) {
-  const state = useStore((s) => s);
+  const recommended = useStore((s) => s.features.recommended);
 
-  const moduleIds = state.features.recommended.references[referenceId];
+  const moduleIds = recommended.references[referenceId];
 
   const modules = (moduleIds ?? [])
-    .flatMap((moduleId) => state.features.recommended.recommendedModules[moduleId] ? [state.features.recommended.recommendedModules[moduleId]] : [])
+    .flatMap((moduleId) => recommended.recommendedModules[moduleId] ? [recommended.recommendedModules[moduleId]] : [])
 
   return modules;
 }

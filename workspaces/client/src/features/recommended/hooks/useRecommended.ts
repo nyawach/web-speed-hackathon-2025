@@ -10,8 +10,7 @@ export function useRecommended({ referenceId }: Params) {
   const moduleIds = state.features.recommended.references[referenceId];
 
   const modules = (moduleIds ?? [])
-    .map((moduleId) => state.features.recommended.recommendedModules[moduleId])
-    .filter(<T>(m: T): m is NonNullable<T> => m != null);
+    .flatMap((moduleId) => state.features.recommended.recommendedModules[moduleId] ? [state.features.recommended.recommendedModules[moduleId]] : [])
 
   return modules;
 }

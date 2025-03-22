@@ -1,13 +1,17 @@
 import path from 'node:path';
 
 import webpack from 'webpack';
-// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+
+const environment = process.env.NODE_ENV ?? 'development';
 
 /** @type {import('webpack').Configuration} */
 const config = {
   devtool: 'cheap-source-map',
-  entry: './src/main.tsx',
-  mode: 'none',
+  entry: {
+    main: './src/main.tsx'
+  },
+  mode: environment,
   module: {
     rules: [
       {
@@ -52,16 +56,22 @@ const config = {
       },
     ],
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      minSize: 20_000,
+    },
+  },
   output: {
     chunkFilename: 'chunk-[contenthash].js',
     chunkFormat: false,
-    filename: 'main.js',
+    filename: '[name].js',
     path: path.resolve(import.meta.dirname, './dist'),
     publicPath: 'auto',
   },
   plugins: [
-    new webpack.optimize.MinChunkSizePlugin({ minChunkSize: 10000 }),
-    new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: process.env.NODE_ENV ?? 'development' }),
+    new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: environment }),
+    new BundleAnalyzerPlugin(),
   ],
   resolve: {
     alias: {

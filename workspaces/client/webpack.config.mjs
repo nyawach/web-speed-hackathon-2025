@@ -3,7 +3,7 @@ import path from 'node:path';
 import UnoCss from '@unocss/webpack';
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import webpack from 'webpack';
-// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const environment = process.env.NODE_ENV ?? 'development';
 
@@ -17,7 +17,7 @@ const config = {
   module: {
     rules: [
       {
-        exclude: [/node_modules\/video\.js/, /node_modules\/@videojs/],
+        // exclude: [/node_modules\/video\.js/, /node_modules\/@videojs/],
         resolve: {
           fullySpecified: false,
         },
@@ -75,6 +75,28 @@ const config = {
       },
     ],
   },
+  // optimization: {
+  //   splitChunks: {
+  //     cacheGroups: {
+  //       framework: {
+  //         chunks: 'all',
+  //         enforce: true,
+  //         name: 'framework',
+  //         priority: 30,
+  //         test: /[\\/]node_modules[\\/](react|react-dom|luxon)[\\/]/,
+  //       },
+  //       shared: {
+  //         chunks: 'all',
+  //         minChunks: 2,
+  //         priority: 10,
+  //         reuseExistingChunk: true,
+  //       },
+  //     },
+  //     chunks: 'all',
+  //     maxInitialRequests: 25,
+  //     minSize: 20000,
+  //   },
+  // },
   output: {
     chunkFilename: 'chunk-[contenthash].js',
     chunkFormat: false,

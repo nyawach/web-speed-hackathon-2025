@@ -13,26 +13,7 @@ import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
 import { createStaticHandler, createStaticRouter, StaticRouterProvider } from 'react-router';
 
-function getFiles(parent: string): string[] {
-  const dirents = readdirSync(parent, { withFileTypes: true });
-  return dirents
-    .filter((dirent) => dirent.isFile() && !dirent.name.startsWith('.'))
-    .map((dirent) => path.join(parent, dirent.name));
-}
-
 export function registerSsr(app: FastifyInstance): void {
-  app.register(fastifyStatic, {
-    prefix: '/public/',
-    root: [
-      path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../client/dist'),
-      path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../public'),
-    ],
-  });
-
-  app.get('/favicon.ico', (_, reply) => {
-    reply.status(404).send();
-  });
-
   app.get('/*', async (req, reply) => {
     // @ts-expect-error ................
     const request = createStandardRequest(req, reply);

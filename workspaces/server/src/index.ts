@@ -3,6 +3,7 @@ import '@wsh-2025/server/src/setups/luxon';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import fastifyCompress from '@fastify/compress'
 import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
 import fastify from 'fastify';
@@ -31,6 +32,8 @@ async function main() {
   app.register(registerSsr, {
     cacheControl: 'no-store',
   });
+
+  app.register(fastifyCompress, { encodings: ['gzip', 'deflate'] });
 
   app.register(fastifyStatic, {
     cacheControl: true,

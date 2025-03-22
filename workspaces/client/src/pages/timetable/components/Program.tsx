@@ -45,35 +45,37 @@ export const Program = ({ height, program }: Props): ReactElement => {
 
   return (
     <>
-      <button
-        className={`w-auto border-[1px] border-solid border-[#000000] ${isBroadcasting ? 'bg-[#FCF6E5]' : 'bg-[#212121]'} px-[12px] py-[8px] text-left ${isArchived ? 'opacity-50' : 'opacity-100'} ${isArchived ? 'hover:brightness-200' : 'hover:brightness-125'} cursor-pointer`}
-        style={{ height, width }}
-        type="button"
-        onClick={onClick}
-      >
-        <div className="flex size-full flex-col overflow-hidden">
-          <div ref={titleRef} className="mb-[8px] flex flex-row items-start justify-start">
-            <span
-              className={`mr-[8px] shrink-0 grow-0 text-[14px] font-bold ${isBroadcasting ? 'text-[#767676]' : 'text-[#999999]'}`}
-            >
-              {DateTime.fromISO(program.startAt).toFormat('mm')}
-            </span>
-            <div
-              className={`grow-1 shrink-1 overflow-hidden text-[14px] font-bold ${isBroadcasting ? 'text-[#212121]' : 'text-[#ffffff]'}`}
-            >
-              <Ellipsis ellipsis reflowOnResize maxLine={3} text={program.title} visibleLine={3} />
+      <Hoverable classNames={{ hovered: isArchived ? 'hover:brightness-200' : 'hover:brightness-125' }}>
+        <button
+          className={`w-auto border-[1px] border-solid border-[#000000] ${isBroadcasting ? 'bg-[#FCF6E5]' : 'bg-[#212121]'} px-[12px] py-[8px] text-left ${isArchived ? 'opacity-50' : 'opacity-100'}`}
+          style={{ height, width }}
+          type="button"
+          onClick={onClick}
+        >
+          <div className="flex size-full flex-col overflow-hidden">
+            <div ref={titleRef} className="mb-[8px] flex flex-row items-start justify-start">
+              <span
+                className={`mr-[8px] shrink-0 grow-0 text-[14px] font-bold ${isBroadcasting ? 'text-[#767676]' : 'text-[#999999]'}`}
+              >
+                {DateTime.fromISO(program.startAt).toFormat('mm')}
+              </span>
+              <div
+                className={`grow-1 shrink-1 overflow-hidden text-[14px] font-bold ${isBroadcasting ? 'text-[#212121]' : 'text-[#ffffff]'}`}
+              >
+                <Ellipsis ellipsis reflowOnResize maxLine={3} text={program.title} visibleLine={3} />
+              </div>
+            </div>
+            <div className={`${shouldImageBeVisible ? 'visible' : 'hidden'} w-full`}>
+              <img
+                ref={imageRef}
+                alt=""
+                className="pointer-events-none w-full rounded-[8px] border-[2px] border-solid border-[#FFFFFF1F]"
+                src={program.thumbnailUrl}
+              />
             </div>
           </div>
-          <div className={`${shouldImageBeVisible ? 'visible' : 'hidden'} w-full`}>
-            <img
-              ref={imageRef}
-              alt=""
-              className="pointer-events-none w-full rounded-[8px] border-[2px] border-solid border-[#FFFFFF1F]"
-              src={program.thumbnailUrl}
-            />
-          </div>
-        </div>
-      </button>
+        </button>
+      </Hoverable>
       <ProgramDetailDialog isOpen={shouldProgramDetailDialogOpen} program={program} />
     </>
   );

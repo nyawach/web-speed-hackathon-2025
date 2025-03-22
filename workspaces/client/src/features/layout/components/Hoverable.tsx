@@ -1,6 +1,5 @@
 import classNames from 'classnames';
-import { Children, cloneElement, ReactElement, Ref, useRef } from 'react';
-import { useMergeRefs } from 'use-callback-ref';
+import { Children, cloneElement, ReactElement, Ref } from 'react';
 
 interface Props {
   children: ReactElement<{ className?: string; ref?: Ref<unknown> }>;
@@ -12,9 +11,6 @@ interface Props {
 
 export const Hoverable = (props: Props) => {
   const child = Children.only(props.children);
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  const mergedRef = useMergeRefs([elementRef, child.props.ref].filter((v) => v != null));
 
   return cloneElement(child, {
     className: classNames(
@@ -23,6 +19,5 @@ export const Hoverable = (props: Props) => {
       props.classNames.default,
       props.classNames.hovered,
     ),
-    ref: mergedRef,
   });
 };

@@ -60,9 +60,9 @@ const config = {
     publicPath: 'auto',
   },
   plugins: [
-    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
+    new webpack.optimize.MinChunkSizePlugin({ minChunkSize: 10000 }),
     new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: '' }),
-    new BundleAnalyzerPlugin(),
+    new BundleAnalyzerPlugin()
   ],
   resolve: {
     alias: {

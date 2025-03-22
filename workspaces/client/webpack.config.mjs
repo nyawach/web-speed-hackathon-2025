@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import webpack from 'webpack';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const environment = process.env.NODE_ENV ?? 'development';
 
@@ -41,7 +41,7 @@ const config = {
       },
       {
         test: /\.png$/,
-        type: 'asset/inline',
+        type: 'asset/resource',
       },
       {
         resourceQuery: /raw/,
@@ -57,10 +57,6 @@ const config = {
     ],
   },
   optimization: {
-    splitChunks: {
-      chunks: 'all',
-      minSize: 20_000,
-    },
   },
   output: {
     chunkFilename: 'chunk-[contenthash].js',
@@ -71,7 +67,7 @@ const config = {
   },
   plugins: [
     new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: environment }),
-    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
   ],
   resolve: {
     alias: {

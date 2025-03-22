@@ -12,15 +12,13 @@ export function useSubscribePointer(): void {
     const handlePointerMove = (ev: MouseEvent) => {
       current.x = ev.clientX;
       current.y = ev.clientY;
+      layout.updatePointer({ ...current });
     };
+
     window.addEventListener('pointermove', handlePointerMove, { signal: abortController.signal });
 
-    let immediate = setImmediate(function tick() {
-      layout.updatePointer({ ...current });
-      immediate = setImmediate(tick);
-    });
     abortController.signal.addEventListener('abort', () => {
-      clearImmediate(immediate);
+      window.removeEventListener('pointermove', handlePointerMove);
     });
 
     return () => {

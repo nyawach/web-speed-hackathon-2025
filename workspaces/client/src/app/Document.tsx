@@ -12,13 +12,7 @@ export const prefetch = async (store: ReturnType<typeof createStore>) => {
 export const Document = () => {
   return (
     <html className="size-full" lang="ja">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <link href="/public/css/reset.css" rel="stylesheet" />
-        <link href="/public/main.css" rel="stylesheet" />
-        <script src="/public/main.js"></script>
-      </head>
+      <head />
       <body className="size-full bg-[#000000] text-[#ffffff]">
         <Suspense>
           <Layout>

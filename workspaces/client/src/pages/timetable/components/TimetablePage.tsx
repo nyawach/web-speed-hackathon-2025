@@ -7,6 +7,7 @@ import { ChannelTitle } from '@wsh-2025/client/src/pages/timetable/components/Ch
 import { NewTimetableFeatureDialog } from '@wsh-2025/client/src/pages/timetable/components/NewTimetableFeatureDialog';
 import { ProgramList } from '@wsh-2025/client/src/pages/timetable/components/ProgramList';
 import { TimelineYAxis } from '@wsh-2025/client/src/pages/timetable/components/TimelineYAxis';
+import { useCloseNewFeatureDialog } from '@wsh-2025/client/src/pages/timetable/hooks/useCloseNewFeatureDialog';
 import { useShownNewFeatureDialog } from '@wsh-2025/client/src/pages/timetable/hooks/useShownNewFeatureDialog';
 
 export const prefetch = async (store: ReturnType<typeof createStore>) => {
@@ -25,6 +26,7 @@ export const prefetch = async (store: ReturnType<typeof createStore>) => {
 export const TimetablePage = () => {
   const record = useTimetable();
   const shownNewFeatureDialog = useShownNewFeatureDialog();
+  const closeNewFeatureDialog = useCloseNewFeatureDialog();
 
   const channelIds = Object.keys(record);
   const programLists = Object.values(record);
@@ -58,7 +60,7 @@ export const TimetablePage = () => {
         </div>
       </div>
 
-      <NewTimetableFeatureDialog isOpen={shownNewFeatureDialog} />
+      <NewTimetableFeatureDialog isOpen={shownNewFeatureDialog} onClose={closeNewFeatureDialog} />
     </>
   );
 };

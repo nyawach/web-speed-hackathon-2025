@@ -1,12 +1,11 @@
 import { Dialog } from '@wsh-2025/client/src/features/dialog/components/Dialog';
-import { useCloseNewFeatureDialog } from '@wsh-2025/client/src/pages/timetable/hooks/useCloseNewFeatureDialog';
 
 interface Props {
   isOpen: boolean;
+  onClose: () => void
 }
 
-export const NewTimetableFeatureDialog = ({ isOpen }: Props) => {
-  const onClose = useCloseNewFeatureDialog();
+export const NewTimetableFeatureDialog = ({ isOpen, onClose }: Props) => {
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>

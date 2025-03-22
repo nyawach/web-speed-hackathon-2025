@@ -3,15 +3,11 @@ import { toBlobURL } from '@ffmpeg/util';
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as schema from '@wsh-2025/schema/src/api/schema';
 import { Parser } from 'm3u8-parser';
-import { use } from 'react';
+import { use, useMemo } from 'react';
 
-interface Params {
-  episode: StandardSchemaV1.InferOutput<typeof schema.getEpisodeByIdResponse>;
-}
-
-async function getSeekThumbnail({ episode }: Params) {
+async function getSeekThumbnail({ episodeId }: { episodeId: string }): Promise<string> {
   // HLS のプレイリストを取得
-  const playlistUrl = `/streams/episode/${episode.id}/playlist.m3u8`;
+  const playlistUrl = `/streams/episode/${episodeId}/playlist.m3u8`;
   const parser = new Parser();
   parser.push(await fetch(playlistUrl).then((res) => res.text()));
   parser.end();
@@ -66,10 +62,14 @@ async function getSeekThumbnail({ episode }: Params) {
   return URL.createObjectURL(new Blob([output], { type: 'image/jpeg' }));
 }
 
-const weakMap = new WeakMap<object, Promise<string>>();
+interface Params {
+  episode: StandardSchemaV1.InferOutput<typeof schema.getEpisodeByIdResponse>;
+}
 
 export const useSeekThumbnail = ({ episode }: Params): string => {
-  const promise = weakMap.get(episode) ?? getSeekThumbnail({ episode });
-  weakMap.set(episode, promise);
+  const promise = useMemo(() => {
+    return getSeekThumbnail({ episodeId: episode.id })
+  }, [episode.id]);
+
   return use(promise);
 };

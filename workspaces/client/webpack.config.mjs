@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import UnoCss from '@unocss/webpack';
+import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import webpack from 'webpack';
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
@@ -44,15 +46,32 @@ const config = {
         type: 'asset/resource',
       },
       {
-        resourceQuery: /raw/,
-        type: 'asset/source',
-      },
-      {
         resourceQuery: /arraybuffer/,
         type: 'javascript/auto',
         use: {
           loader: 'arraybuffer-loader',
         },
+      },
+      // CSSファイル向けに特別なローダー設定
+      {
+        oneOf: [
+          // ?rawクエリ付きの場合
+          {
+            resourceQuery: /raw/,
+            type: 'asset/source',
+          },
+          // 通常のCSSファイル
+          {
+            use: [
+              MiniCssExtractPlugin.loader,
+              {
+                loader: "css-loader",
+                options: { url: false }
+              }
+            ]
+          }
+        ],
+        test: /\.css$/,
       },
     ],
   },
@@ -65,6 +84,8 @@ const config = {
   },
   plugins: [
     new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: environment }),
+    UnoCss(),
+    new MiniCssExtractPlugin(),
     // new BundleAnalyzerPlugin(),
   ],
   resolve: {

@@ -3,6 +3,8 @@ declare module '*.png' {
   export = value;
 }
 
+declare module '*.css';
+
 declare module '*?raw' {
   const value: string;
   export = value;

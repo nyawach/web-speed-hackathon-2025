@@ -22,7 +22,7 @@ export function registerSsr(app: FastifyInstance): void {
     }
 
     const router = createStaticRouter(handler.dataRoutes, context);
-    renderToString(
+    const app = renderToString(
       <StrictMode>
         <StoreProvider createStore={() => store}>
           <StaticRouterProvider context={context} hydrate={false} router={router} />
@@ -38,7 +38,7 @@ export function registerSsr(app: FastifyInstance): void {
           <meta content="width=device-width, initial-scale=1.0" name="viewport" />
           <script src="/public/main.js"></script>
         </head>
-        <body></body>
+        <body>${app}</body>
       </html>
       <script>
         window.__staticRouterHydrationData = ${htmlescape({

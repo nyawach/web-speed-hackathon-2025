@@ -44,3 +44,12 @@ export function registerSsr(app: FastifyInstance): void {
     `);
   });
 }
+
+/** MEMO:
+      <script>
+        window.__staticRouterHydrationData = ${htmlescape({
+          actionData: context.actionData,
+          loaderData: context.loaderData,
+        })};
+      </script>
+ */

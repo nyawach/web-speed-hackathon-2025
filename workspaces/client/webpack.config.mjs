@@ -1,11 +1,11 @@
 import path from 'node:path';
 
 import webpack from 'webpack';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 /** @type {import('webpack').Configuration} */
 const config = {
-  devtool: 'inline-source-map',
+  devtool: 'cheap-source-map',
   entry: './src/main.tsx',
   mode: 'none',
   module: {
@@ -62,7 +62,6 @@ const config = {
   plugins: [
     new webpack.optimize.MinChunkSizePlugin({ minChunkSize: 10000 }),
     new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: '' }),
-    new BundleAnalyzerPlugin()
   ],
   resolve: {
     alias: {

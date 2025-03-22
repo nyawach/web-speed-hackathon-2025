@@ -1,24 +1,29 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { toBlobURL } from '@ffmpeg/util';
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as schema from '@wsh-2025/schema/src/api/schema';
 import { Parser } from 'm3u8-parser';
-import { use, useMemo } from 'react';
+import { use } from 'react';
 
-async function getSeekThumbnail({ episodeId }: { episodeId: string }): Promise<string> {
+interface Params {
+  episode: StandardSchemaV1.InferOutput<typeof schema.getEpisodeByIdResponse>;
+}
+
+async function getSeekThumbnail({ episode }: Params) {
   // HLS のプレイリストを取得
-  const playlistUrl = `/streams/episode/${episodeId}/playlist.m3u8`;
+  const playlistUrl = `/streams/episode/${episode.id}/playlist.m3u8`;
   const parser = new Parser();
   parser.push(await fetch(playlistUrl).then((res) => res.text()));
   parser.end();
 
-  const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
-
   // FFmpeg の初期化
   const ffmpeg = new FFmpeg();
   await ffmpeg.load({
-    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+    coreURL: await import('@ffmpeg/core?arraybuffer').then(({ default: b }) => {
+      return URL.createObjectURL(new Blob([b], { type: 'text/javascript' }));
+    }),
+    wasmURL: await import('@ffmpeg/core/wasm?arraybuffer').then(({ default: b }) => {
+      return URL.createObjectURL(new Blob([b], { type: 'application/wasm' }));
+    }),
   });
 
   // 動画のセグメントファイルを取得
@@ -62,14 +67,10 @@ async function getSeekThumbnail({ episodeId }: { episodeId: string }): Promise<s
   return URL.createObjectURL(new Blob([output], { type: 'image/jpeg' }));
 }
 
-interface Params {
-  episode: StandardSchemaV1.InferOutput<typeof schema.getEpisodeByIdResponse>;
-}
+const weakMap = new WeakMap<object, Promise<string>>();
 
 export const useSeekThumbnail = ({ episode }: Params): string => {
-  const promise = useMemo(() => {
-    return getSeekThumbnail({ episodeId: episode.id })
-  }, [episode.id]);
-
+  const promise = weakMap.get(episode) ?? getSeekThumbnail({ episode });
+  weakMap.set(episode, promise);
   return use(promise);
 };

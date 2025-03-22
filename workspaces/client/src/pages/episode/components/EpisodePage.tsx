@@ -19,11 +19,10 @@ import { usePlayerRef } from '@wsh-2025/client/src/pages/episode/hooks/usePlayer
 
 export const prefetch = async (store: ReturnType<typeof createStore>, { episodeId }: Params) => {
   invariant(episodeId);
+  const state = store.getState()
   const [episode, modules] = await Promise.all([
-    store.getState().features.episode.fetchEpisodeById({ episodeId }),
-    store
-      .getState()
-      .features.recommended.fetchRecommendedModulesByReferenceId({ referenceId: episodeId })
+    state.features.episode.fetchEpisodeById({ episodeId }),
+    state.features.recommended.fetchRecommendedModulesByReferenceId({ referenceId: episodeId })
   ])
   return { episode, modules };
 };

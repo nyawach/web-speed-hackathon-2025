@@ -61,7 +61,7 @@ const config = {
   },
   plugins: [
     new webpack.optimize.MinChunkSizePlugin({ minChunkSize: 10000 }),
-    new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: '' }),
+    new webpack.EnvironmentPlugin({ API_BASE_URL: '/api', NODE_ENV: process.env.NODE_ENV ?? 'development' }),
   ],
   resolve: {
     alias: {

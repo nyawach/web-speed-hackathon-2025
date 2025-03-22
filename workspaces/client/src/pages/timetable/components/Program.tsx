@@ -1,7 +1,7 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as schema from '@wsh-2025/schema/src/api/schema';
 import { DateTime } from 'luxon';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useMemo, useRef } from 'react';
 import Ellipsis from 'react-ellipsis-component';
 import { ArrayValues } from 'type-fest';
 
@@ -26,25 +26,22 @@ export const Program = ({ height, program }: Props): ReactElement => {
   };
 
   const currentUnixtimeMs = useCurrentUnixtimeMs();
+  const startAtMs = DateTime.fromISO(program.startAt).toMillis()
+  const endAtMs = DateTime.fromISO(program.endAt).toMillis()
+  const currntMs = DateTime.fromMillis(currentUnixtimeMs).toMillis()
   const isBroadcasting =
-    DateTime.fromISO(program.startAt).toMillis() <= DateTime.fromMillis(currentUnixtimeMs).toMillis() &&
-    DateTime.fromMillis(currentUnixtimeMs).toMillis() < DateTime.fromISO(program.endAt).toMillis();
-  const isArchived = DateTime.fromISO(program.endAt).toMillis() <= DateTime.fromMillis(currentUnixtimeMs).toMillis();
+    startAtMs <= currntMs && currntMs < endAtMs
+  const isArchived = endAtMs <= currntMs;
 
   const titleRef = useRef<HTMLDivElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
-  const [shouldImageBeVisible, setShouldImageBeVisible] = useState<boolean>(false);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const imageHeight = imageRef.current?.clientHeight ?? 0;
-      const titleHeight = titleRef.current?.clientHeight ?? 0;
-      setShouldImageBeVisible(imageHeight <= height - titleHeight);
-    }, 250);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [height]);
+  // NOTE: widthが変わったときに再計算が必要
+  const shouldImageBeVisible = useMemo(() => {
+    const imageHeight = imageRef.current?.clientHeight ?? 0;
+    const titleHeight = titleRef.current?.clientHeight ?? 0;
+    return imageHeight <= height - titleHeight
+  }, [height, titleRef.current, imageRef.current, width]);
 
   return (
     <>
@@ -68,7 +65,7 @@ export const Program = ({ height, program }: Props): ReactElement => {
                 <Ellipsis ellipsis reflowOnResize maxLine={3} text={program.title} visibleLine={3} />
               </div>
             </div>
-            <div className={`${shouldImageBeVisible ? 'opacity-100' : 'opacity-0'} w-full`}>
+            <div className={`${shouldImageBeVisible ? 'visible' : 'hidden'} w-full`}>
               <img
                 ref={imageRef}
                 alt=""

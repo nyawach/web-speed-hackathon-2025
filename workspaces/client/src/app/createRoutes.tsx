@@ -80,9 +80,14 @@ export function createRoutes(store: ReturnType<typeof createStore>): RouteObject
           path: '*',
         },
       ],
-      Component: Document,
-      async loader() {
-        return await prefetch(store);
+      async lazy() {
+        const { Document, prefetch } = await import('@wsh-2025/client/src/app/Document');
+        return {
+          Component: Document,
+          async loader() {
+            return await prefetch(store);
+          },
+        };
       },
       path: '/',
     },

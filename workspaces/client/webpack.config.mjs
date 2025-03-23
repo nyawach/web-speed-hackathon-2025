@@ -1,11 +1,12 @@
 import path from 'node:path';
 
 import UnoCss from '@unocss/webpack';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
-const environment = process.env.NODE_ENV ?? 'development';
+const environment = process.env.NODE_ENV ?? 'production';
 
 /** @type {import('webpack').Configuration} */
 const config = {
@@ -97,6 +98,11 @@ const config = {
   //     minSize: 20000,
   //   },
   // },
+  optimization: {
+    minimizer: [
+      new CssMinimizerPlugin(),
+    ]
+  },
   output: {
     chunkFilename: 'chunk-[contenthash].js',
     chunkFormat: false,

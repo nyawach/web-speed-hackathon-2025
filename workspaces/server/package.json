@@ -68,6 +68,10 @@
       "command": "tsx ./src/index.ts",
       "service": true,
       "env": {
+        "NODE_ENV": {
+          "external": true,
+          "default": "production"
+        },
         "API_BASE_URL": {
           "external": true,
           "default": "http://localhost:8000/api"
@@ -90,6 +94,10 @@
       "command": "tsx ./src/index.ts",
       "service": true,
       "env": {
+        "NODE_ENV": {
+          "external": true,
+          "default": "production"
+        },
         "API_BASE_URL": {
           "external": true,
           "default": "http://localhost:8000/api"

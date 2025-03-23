@@ -1,13 +1,14 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as schema from '@wsh-2025/schema/src/api/schema';
 import { DateTime } from 'luxon';
-import { ReactElement, useMemo, useRef } from 'react';
+import { ReactElement, useMemo, useRef, useState } from 'react';
 import { ArrayValues } from 'type-fest';
 
 import { Ellipsis } from '@wsh-2025/client/src/features/ellipsis/components/Ellipsis';
 import { Hoverable } from '@wsh-2025/client/src/features/layout/components/Hoverable';
 import { useColumnWidth } from '@wsh-2025/client/src/pages/timetable/hooks/useColumnWidth';
 import { useCurrentUnixtimeMs } from '@wsh-2025/client/src/pages/timetable/hooks/useCurrentUnixtimeMs';
+import { useResizeObserver } from '@wsh-2025/client/src/pages/timetable/hooks/useResizeObserver';
 
 interface Props {
   height: number;
@@ -26,15 +27,17 @@ export const Program = ({ height, onClick, program }: Props): ReactElement => {
     startAtMs <= currntMs && currntMs < endAtMs
   const isArchived = endAtMs <= currntMs;
 
-  const titleRef = useRef<HTMLDivElement | null>(null);
-  const imageRef = useRef<HTMLImageElement | null>(null);
-
-  // NOTE: widthが変わったときに再計算が必要
-  const shouldImageBeVisible = useMemo(() => {
+  const [shouldImageBeVisible, setValue] = useState<boolean>(false);
+  const {ref: titleRef} = useResizeObserver<HTMLDivElement>(() => {
     const imageHeight = imageRef.current?.clientHeight ?? 0;
     const titleHeight = titleRef.current?.clientHeight ?? 0;
-    return imageHeight <= height - titleHeight
-  }, [height, titleRef.current, imageRef.current, width]);
+    setValue(imageHeight <= height - titleHeight)
+  });
+  const {ref: imageRef} = useResizeObserver<HTMLImageElement>(() => {
+    const imageHeight = imageRef.current?.clientHeight ?? 0;
+    const titleHeight = titleRef.current?.clientHeight ?? 0;
+    setValue(imageHeight <= height - titleHeight)
+  });
 
   return (
     <Hoverable classNames={{ hovered: isArchived ? 'hover:brightness-200' : 'hover:brightness-125' }}>
@@ -57,7 +60,7 @@ export const Program = ({ height, onClick, program }: Props): ReactElement => {
               <Ellipsis ellipsis reflowOnResize maxLine={3} text={program.title} visibleLine={3} />
             </div>
           </div>
-          <div className={`${shouldImageBeVisible ? 'visible' : 'hidden'} w-full`}>
+          <div className={`${shouldImageBeVisible ? 'opacity-100' : 'opacity-0'} w-full`}>
             <img
               ref={imageRef}
               alt=""

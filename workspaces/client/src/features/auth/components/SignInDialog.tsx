@@ -32,7 +32,6 @@ export const SignInDialog = ({ isOpen, onClose, onOpenSignUp }: Props) => {
         password: values.password,
       });
 
-      alert('ログインに成功しました');
       onClose();
       return;
     } catch (e) {

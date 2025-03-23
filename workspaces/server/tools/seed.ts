@@ -132,8 +132,12 @@ async function main() {
         description: faker.lorem.paragraph({ max: 200, min: 100 }).replace(/\s/g, '').replace(/\./g, '。'),
         id: faker.string.uuid(),
         thumbnailUrl: `${faker.helpers.arrayElement(imagePaths)}`,
+        // NOTE: Exec here to keep seed data consistence.
+        _: faker.string.nanoid(),
         title: faker.helpers.arrayElement(seriesTitleList),
       }));
+
+
       const result = await database.insert(schema.series).values(data).returning();
       seriesList.push(...result);
     }
@@ -151,6 +155,8 @@ async function main() {
           seriesId: series.id,
           streamId: faker.helpers.arrayElement(streamList).id,
           thumbnailUrl: `${faker.helpers.arrayElement(imagePaths)}`,
+          // NOTE: Exec here to keep seed data consistence.
+          _: faker.string.nanoid(),
           title: `第${String(idx + 1)}話 ${faker.helpers.arrayElement(episodeTitleList)}`,
           premium: idx % 5 === 0,
         }),
@@ -186,6 +192,10 @@ async function main() {
           thumbnailUrl: `${faker.helpers.arrayElement(imagePaths)}`,
           title: `${series?.title ?? ''} ${episode.title}`,
         };
+
+        // NOTE: Exec here to keep seed data consistence.
+        faker.string.nanoid()
+
         programList.push(program);
 
         remainingMinutes -= duration;

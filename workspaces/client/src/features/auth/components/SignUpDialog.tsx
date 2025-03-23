@@ -32,7 +32,6 @@ export const SignUpDialog = ({ isOpen, onClose, onOpenSignIn }: Props) => {
         password: values.password,
       });
 
-      alert('新規会員登録に成功しました');
       onClose();
       return;
     } catch (e) {

@@ -16,7 +16,6 @@ export const SignOutDialog = ({ isOpen, onClose }: Props) => {
     try {
       await authActions.signOut();
 
-      alert('ログアウトしました');
       onClose();
       return;
     } catch {

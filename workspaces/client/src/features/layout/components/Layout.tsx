@@ -18,8 +18,6 @@ interface Props {
 }
 
 export const Layout = ({ children }: Props) => {
-  useSubscribePointer();
-
   const navigation = useNavigation();
   const isLoading =
     navigation.location != null && (navigation.location.state as { loading?: string } | null)?.['loading'] !== 'none';

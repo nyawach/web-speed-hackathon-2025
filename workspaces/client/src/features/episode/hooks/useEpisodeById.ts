@@ -1,13 +1,15 @@
-import { useStore } from '@wsh-2025/client/src/app/StoreContext';
+import { useLoaderData } from 'react-router';
+
+import { StoreState } from '@wsh-2025/client/src/app/createStore';
 
 interface Params {
   episodeId: string;
 }
 
 export function useEpisodeById({ episodeId }: Params) {
-  const episodes = useStore((s) => s.features.episode.episodes);
+  const state = useLoaderData<StoreState>();
 
-  const episode = episodes[episodeId];
+  const episode = state.features.episode.episodes[episodeId];
 
   return episode;
 }

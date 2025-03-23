@@ -1,11 +1,15 @@
-import { useStore } from '@wsh-2025/client/src/app/StoreContext';
+import { useLoaderData } from 'react-router';
+
+import { StoreState } from '@wsh-2025/client/src/app/createStore';
 
 interface Params {
   referenceId: string;
 }
 
 export function useRecommended({ referenceId }: Params) {
-  const recommended = useStore((s) => s.features.recommended);
+  const state = useLoaderData<StoreState>()
+
+  const recommended = state.features.recommended
 
   const moduleIds = recommended.references[referenceId];
 

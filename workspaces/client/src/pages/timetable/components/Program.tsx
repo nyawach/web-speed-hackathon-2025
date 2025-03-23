@@ -1,7 +1,7 @@
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import * as schema from '@wsh-2025/schema/src/api/schema';
 import { DateTime } from 'luxon';
-import { ReactElement, useMemo, useRef } from 'react';
+import { ReactElement, useMemo, useRef, useState } from 'react';
 import Ellipsis from 'react-ellipsis-component';
 import { ArrayValues } from 'type-fest';
 
@@ -9,7 +9,6 @@ import { Hoverable } from '@wsh-2025/client/src/features/layout/components/Hover
 import { ProgramDetailDialog } from '@wsh-2025/client/src/pages/timetable/components/ProgramDetailDialog';
 import { useColumnWidth } from '@wsh-2025/client/src/pages/timetable/hooks/useColumnWidth';
 import { useCurrentUnixtimeMs } from '@wsh-2025/client/src/pages/timetable/hooks/useCurrentUnixtimeMs';
-import { useSelectedProgramId } from '@wsh-2025/client/src/pages/timetable/hooks/useSelectedProgramId';
 
 interface Props {
   height: number;
@@ -19,11 +18,15 @@ interface Props {
 export const Program = ({ height, program }: Props): ReactElement => {
   const width = useColumnWidth(program.channelId);
 
-  const [selectedProgramId, setProgram] = useSelectedProgramId();
+  const [selectedProgramId, setProgramId] = useState<string | null>(null);
   const shouldProgramDetailDialogOpen = program.id === selectedProgramId;
   const onClick = () => {
-    setProgram(program);
+    setProgramId(program.id);
   };
+  const onClose = () => {
+    setProgramId(null);
+  };
+
 
   const currentUnixtimeMs = useCurrentUnixtimeMs();
   const startAtMs = DateTime.fromISO(program.startAt).toMillis()
@@ -76,7 +79,7 @@ export const Program = ({ height, program }: Props): ReactElement => {
           </div>
         </button>
       </Hoverable>
-      <ProgramDetailDialog isOpen={shouldProgramDetailDialogOpen} program={program} />
+      <ProgramDetailDialog isOpen={shouldProgramDetailDialogOpen} program={program} onClose={onClose} />
     </>
   );
 };

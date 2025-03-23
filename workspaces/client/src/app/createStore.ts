@@ -43,3 +43,5 @@ export const createStore = ({ hydrationData }: Props) => {
 
   return store;
 };
+
+export type StoreState = ReturnType<Pick<ReturnType<typeof createStore>, 'getState'>['getState']>

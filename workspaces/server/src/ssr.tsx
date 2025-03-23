@@ -4,8 +4,9 @@ import { createStore } from '@wsh-2025/client/src/app/createStore';
 import type { FastifyInstance } from 'fastify';
 import { createStandardRequest } from 'fastify-standard-request-reply';
 import htmlescape from 'htmlescape';
+import { WritableStream } from 'node:stream/web';
 import { StrictMode } from 'react';
-import { renderToString } from 'react-dom/server';
+import { renderToPipeableStream } from 'react-dom/server';
 import { createStaticHandler, createStaticRouter, StaticRouterProvider } from 'react-router';
 
 export function registerSsr(app: FastifyInstance): void {
@@ -22,35 +23,37 @@ export function registerSsr(app: FastifyInstance): void {
     }
 
     const router = createStaticRouter(handler.dataRoutes, context);
-    const app = renderToString(
-      <html lang="ja">
-        <head>
-          <meta charSet="UTF-8" />
-          <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-          <link href="/public/css/reset.css" rel="stylesheet" />
-          <link href="/public/main.css" rel="stylesheet" />
-          <script src="/public/main.js"></script>
-        </head>
-        <body>
-          <StrictMode>
-            <StoreProvider createStore={() => store}>
-              <StaticRouterProvider context={context} hydrate={false} router={router} />
-            </StoreProvider>
-          </StrictMode>
-        </body>
-      </html>
-    );
-
-    reply.type('text/html').send(/* html */`
-      <!DOCTYPE html>
-      ${app}
-      <script>
-        window.__staticRouterHydrationData = ${htmlescape({
-          actionData: context.actionData,
-          loaderData: context.loaderData,
-        })};
-      </script>
-    `);
+    const { pipe } = renderToPipeableStream(
+      <>
+        <html lang="ja">
+          <head>
+            <meta charSet="UTF-8" />
+            <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+            <link href="/public/css/reset.css" rel="stylesheet" />
+            <link href="/public/main.css" rel="stylesheet" />
+            <script src="/public/main.js"></script>
+          </head>
+          <body>
+            <StrictMode>
+              <StoreProvider createStore={() => store}>
+                <StaticRouterProvider context={context} hydrate={false} router={router} />
+              </StoreProvider>
+            </StrictMode>
+          </body>
+        </html>
+        <script dangerouslySetInnerHTML={{ __html: `
+            window.__staticRouterHydrationData = ${htmlescape({
+              actionData: context.actionData,
+              loaderData: context.loaderData,
+            })};
+        `}}>
+        </script>
+      </>
+    , {
+      onShellReady: () => {
+        pipe(reply.type('text/html').raw);
+      }
+    });
   });
 }
 

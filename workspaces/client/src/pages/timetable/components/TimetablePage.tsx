@@ -15,12 +15,13 @@ export const prefetch = async (store: ReturnType<typeof createStore>) => {
   const since = now.startOf('day').toISO();
   const until = now.endOf('day').toISO();
 
-  const [channels, programs] = await Promise.all([
+  await Promise.all([
     store.getState().features.channel.fetchChannels(),
     store.getState().features.timetable.fetchTimetable({ since, until }),
   ])
 
-  return { channels, programs };
+  const newState = store.getState()
+  return newState
 };
 
 export const TimetablePage = () => {

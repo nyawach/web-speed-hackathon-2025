@@ -6,10 +6,11 @@ import { EpisodeItem } from '@wsh-2025/client/src/features/recommended/component
 import { SeriesItem } from '@wsh-2025/client/src/features/recommended/components/SeriesItem';
 
 interface Props {
+  lazy: boolean
   module: ArrayValues<StandardSchemaV1.InferOutput<typeof schema.getRecommendedModulesResponse>>;
 }
 
-export const CarouselSection = ({ module }: Props) => {
+export const CarouselSection = ({ lazy, module }: Props) => {
 
   return (
     <div className="w-full">
@@ -27,8 +28,8 @@ display: none;
       >
         {module.items.map((item) => (
           <div key={item.id} className={`shrink-0 grow-0 snap-start min-w-[276px]`}>
-            {item.series != null ? <SeriesItem series={item.series} /> : null}
-            {item.episode != null ? <EpisodeItem episode={item.episode} /> : null}
+            {item.series != null ? <SeriesItem lazy={lazy} series={item.series} /> : null}
+            {item.episode != null ? <EpisodeItem episode={item.episode} lazy={lazy} /> : null}
           </div>
         ))}
       </div>

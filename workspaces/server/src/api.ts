@@ -504,6 +504,14 @@ export async function registerApi(app: FastifyInstance): Promise<void> {
           },
         },
       });
+      // NOTE: Insert empty string to reduce the response size, it's only used at JumbotronSection.
+      modules.map((module) => {
+        module.items.map((item) => {
+          if (module.type !== 'jumbotron' && item.episode) {
+            item.episode.description = ''
+          }
+        });
+      })
       reply.code(200).send(modules);
     },
   });
